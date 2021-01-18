@@ -29,7 +29,107 @@ class Question {
     }
 
     function main_form(){
-        return '
+        global $wpdb;
+        $data=$wpdb->get_results("select  * from oralhalsa_se.www_questions Limit 8  ");
+        $data3=$wpdb->get_results("select  * from oralhalsa_se.www_questions limit 8 offset 8  ");
+        
+
+$html='<body>
+    <div class="container">
+        <div class="form_one" id="one">
+            <h3>Choose One (1)</h3>
+            <form id="first_form" name="first_form">
+                <input type="radio" id="general" name="first_Val" value="General">
+                <label for="general">General</label><br>
+                <input type="radio" id="cronic" name="first_Val" value="Cronic">
+                <label for="cronic">Cronic</label><br>
+
+            </form>
+            <button onclick=getfirstval()>Next</button>
+
+        </div>
+        <div class="form_two" id="two" style="display:none ;">
+            <h3>Choose From Each Section (2)</h3>
+            <form id="two_form" name="two_form">';
+            $second_form= '';
+            
+            for($i=0;$i<sizeof($data);$i++){
+                $second_form.='<label for="question_one"> <h6>'.$i+1 .'. '. base64_decode($data[$i]->ques_desc) .' </h6> </label><br>';
+                $data2=$wpdb->get_results("select  * from oralhalsa_se.www_ques_answer where ques_id = ". $data[$i]->ques_id ."");
+                for($j=0;$j<sizeof($data2);$j++){
+                    
+                    $second_form.='('. $j+1 .')    <input type="radio" name="Question'. $i .'" value="'.$j+1 .'" >'. base64_decode( $data2[$j]->ans_desc) .'   <br>';
+                }
+            }
+            /*dynamic js hasto add*/
+            
+            /*'
+                <label for="question_one">1. Dunmmy Question</label><br>
+                Option 1
+                <input type="radio" name="question1" value=1>
+                Option 2
+                <input type="radio" name="question1" value=2>
+                Option 3
+                <input type="radio" name="question1" value=3><br><br>
+                <label for="question_two">2. Dunmmy Question</label><br>
+                Option 1
+                <input type="radio" name="question2" value=1>
+                Option 2
+                <input type="radio" name="question2" value=2>
+                Option 3
+                <input type="radio" name="question2" value=3>
+                <br><br>
+                <label for="question_three">3. Dunmmy Question</label><br>
+                Option 1
+                <input type="radio" name="question3" value=1>
+                Option 2
+                <input type="radio" name="question3" value=2>
+                Option 3
+                <input type="radio" name="question3" value=3>
+
+            
+';*/
+
+$temp='
+</form><br>
+            <button onclick=getsecond()>Next</button>
+        </div>
+
+        <div class="form_three" id="three" style="display:none ;">
+            <h3>Choose From Each Section (3)</h3>
+            <form id="three_form" name="three_form">
+                ';
+
+                $third_form='';
+                for($i=0;$i<sizeof($data3);$i++){
+                    $third_form.='<label for="question_one"> <h6>'.$i+1 .'. '. base64_decode($data3[$i]->ques_desc) .' </h6> </label><br>';
+                    $data4=$wpdb->get_results("select * from oralhalsa_se.www_ques_answer where ques_id = ". $data3[$i]->ques_id ." ");
+                    for($j=0;$j<sizeof($data4);$j++){
+                        
+                        $third_form.='('. $j+1 .')    <input type="radio" name="Question'. $i+8 .'" value="'.$j+1 .'" >'. base64_decode( $data4[$j]->ans_desc) .'   <br>';
+                    }
+                }
+            
+$temp2='
+            </form><br>
+            <button onclick=getthird()>Next</button>
+
+
+        </div>
+
+        <div class="form_four" id="four" style="display: none;">
+
+            
+            <div id="display">
+           
+           
+            </div>
+        </div>
+
+    </div>
+</body>';
+
+$script1= '
         <style>
     table, th, td {
   border: 1px solid ;
@@ -59,168 +159,98 @@ class Question {
             document.getElementById("one").style.display = "none";
         }
     }
+';
 
+
+
+$temp_Script='
+';
+
+    for($i=0;$i<8;$i++){
+        $temp_Script.='var loopvar = document.getElementsByName("Question'.$i.'");';
+        $temp_Script.='for (i = 0; i < loopvar.length; i++) {
+    if (loopvar[i].checked) {
+        second_'.$i.' = loopvar[i].value;
+       
+    }
+
+}';
+    }
+
+   $temp_Script2='';
+   $temp_min_1='';
+   for($i=1;$i<8;$i++){
+       $temp_Script2.='|| typeof second_'.$i.' === \'undefined\' ';
+       
+   } 
+   for($i=0;$i<8;$i++){
+       $temp_min_1.='parseInt(second_'.$i.'),';
+   }
+
+$script2='
     function getsecond() {
-        var loopvar = document.getElementsByName("question1");
-        for (i = 0; i < loopvar.length; i++) {
-            if (loopvar[i].checked) {
-                second_first = loopvar[i].value;
-            }
 
-        }
-        var loopvar = document.getElementsByName("question2");
-        for (i = 0; i < loopvar.length; i++) {
-            if (loopvar[i].checked) {
-                second_second = loopvar[i].value;
-            }
 
-        }
-        var loopvar = document.getElementsByName("question3");
-        for (i = 0; i < loopvar.length; i++) {
-            if (loopvar[i].checked) {
-                second_third = loopvar[i].value;
-            }
 
-        }
+       '.$temp_Script.'
 
-        if (typeof second_first === \'undefined\' || typeof second_second === \'undefined\' || typeof second_third === \'undefined\') {
+        if ( typeof second_0 === \'undefined\''.$temp_Script2 .') {
+            
         } else {
-            second = Math.min(parseInt(second_first), parseInt(second_second), parseInt(second_third));
+            first_min=String.fromCharCode(Math.min('.$temp_min_1.')+64);
             document.getElementById("two").style.display = "none";
             document.getElementById("one").style.display = "none";
             document.getElementById("three").style.display = "";
-           // alert(second);
+            //alert(String.fromCharCode(first_min+64));
+          
         }
     }
+';
 
 
+
+$temp_Script3='
+';
+
+    for($i=8;$i<15;$i++){
+        $temp_Script3.='var loopvar = document.getElementsByName("Question'.$i.'");';
+        $temp_Script3.='for (i = 0; i < loopvar.length; i++) {
+    if (loopvar[i].checked) {
+        second_'.$i.' = loopvar[i].value;
+       
+    }
+
+}';
+    }
+
+   $temp_Script4='';
+   for($i=9;$i<14;$i++){
+       $temp_Script4.='|| typeof second_'.$i.' === \'undefined\' ';
+   } 
+   $temp_min_2='';
+   for($i=8;$i<14;$i++){
+    $temp_min_2.='parseInt(second_'.$i.'),';
+}
+$script3='
     function getthird() {
-        var loopvar = document.getElementsByName("question_1");
-        for (i = 0; i < loopvar.length; i++) {
-            if (loopvar[i].checked) {
-                third_first = loopvar[i].value;
-            }
+        '.$temp_Script3.'
 
-        }
-        var loopvar = document.getElementsByName("question_2");
-        for (i = 0; i < loopvar.length; i++) {
-            if (loopvar[i].checked) {
-                third_second = loopvar[i].value;
-            }
-
-        }
-        var loopvar = document.getElementsByName("question_3");
-        for (i = 0; i < loopvar.length; i++) {
-            if (loopvar[i].checked) {
-                third_third = loopvar[i].value;
-            }
-
-        }
-
-        if (typeof third_first === \'undefined\' || typeof third_second === \'undefined\' || typeof third_third === \'undefined\') {
+        if (typeof second_8 === \'undefined\''.$temp_Script4 .') {
         } else {
-            third = Math.min(parseInt(third_first), parseInt(third_second), parseInt(third_third));
+            second_min=Math.min('.$temp_min_2.');
             document.getElementById("two").style.display = "none";
             document.getElementById("one").style.display = "none";
             document.getElementById("three").style.display = "none";
             document.getElementById("four").style.display = "";
-           // alert(third);
-            document.getElementById("display").innerHTML =       \'<h1>Four</h1>  <table > <tr> <th>Page</th> <th>Ans</th> </tr> <tr> <td>First</td> <td>\'+first_Value+\'</td> </tr> <tr> <td>Second</td> <td>\'+second+\'</td> </tr> <tr> <td>Third</td> <td>\'+third+\'</td> </tr> </table>\';
-
-
-        }
-    }
-
-</script>
-
-<body>
-    <div class="container">
-        <div class="form_one" id="one">
-            <h1>First</h1>
-            <form id="first_form" name="first_form">
-                <input type="radio" id="general" name="first_Val" value="General">
-                <label for="general">General</label><br>
-                <input type="radio" id="cronic" name="first_Val" value="Cronic">
-                <label for="cronic">Cronic</label><br>
-
-            </form>
-            <button onclick=getfirstval()>Next</button>
-
-        </div>
-        <div class="form_two" id="two" style="display: none;">
-            <h1>Second</h1>
-            <form id="two_form" name="two_form">
-                <label for="question_one">1. Dunmmy Question</label><br>
-                Option 1
-                <input type="radio" name="question1" value=1>
-                Option 2
-                <input type="radio" name="question1" value=2>
-                Option 3
-                <input type="radio" name="question1" value=3><br><br>
-                <label for="question_two">2. Dunmmy Question</label><br>
-                Option 1
-                <input type="radio" name="question2" value=1>
-                Option 2
-                <input type="radio" name="question2" value=2>
-                Option 3
-                <input type="radio" name="question2" value=3>
-                <br><br>
-                <label for="question_three">3. Dunmmy Question</label><br>
-                Option 1
-                <input type="radio" name="question3" value=1>
-                Option 2
-                <input type="radio" name="question3" value=2>
-                Option 3
-                <input type="radio" name="question3" value=3>
-
-            </form><br>
-            <button onclick=getsecond()>Next</button>
-
-        </div>
-
-        <div class="form_three" id="three" style="display: none;">
-            <h1>Three</h1>
-            <form id="three_form" name="three_form">
-                <label for="question_one">1. Dunmmy Question</label><br>
-                Option 1
-                <input type="radio" name="question_1" value=1>
-                Option 2
-                <input type="radio" name="question_1" value=2>
-                Option 3
-                <input type="radio" name="question_1" value=3><br><br>
-                <label for="question_two">2. Dunmmy Question</label><br>
-                Option 1
-                <input type="radio" name="question_2" value=1>
-                Option 2
-                <input type="radio" name="question_2" value=2>
-                Option 3
-                <input type="radio" name="question_2" value=3>
-                <br><br>
-                <label for="question_three">3. Dunmmy Question</label><br>
-                Option 1
-                <input type="radio" name="question_3" value=1>
-                Option 2
-                <input type="radio" name="question_3" value=2>
-                Option 3
-                <input type="radio" name="question_3" value=3>
-
-            </form><br>
-            <button onclick=getthird()>Next</button>
-
-
-        </div>
-
-        <div class="form_four" id="four" style="display: none;">
-
             
-            <div id="display">
-           
-           
-            </div>
-        </div>
+            document.getElementById("display").innerHTML =\'<h3>Selections </h3>  <table > <tr> <th>Page</th> <th>Ans</th> </tr> <tr> <td>First</td> <td>\'+first_Value+\'</td> </tr> <tr> <td>Second</td> <td>\'+first_min+\'</td> </tr> <tr> <td>Third</td> <td>\'+second_min+\'</td> </tr> </table>\';     
+        }
+    }';
+    $script_last='
 
-    </div>
-</body>';
+</script>';
+
+return $script1.$script2.$script3.$script_last.$html.$second_form.$temp.$third_form.$temp2;
     }
 
     function activate(){
