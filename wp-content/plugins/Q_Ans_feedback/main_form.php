@@ -34,16 +34,91 @@ class Question {
         $data3=$wpdb->get_results("select  * from oralhalsa_se.www_questions limit 8 offset 8  ");
         
 
-$html='<body>
+$html='<style>
+input[type=range] {
+    -webkit-appearance: none;
+    margin: 20px 0;
+    width: 100%;
+  }
+  input[type=range]:focus {
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: #03a9f4;
+    border-radius: 25px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 4px 0 rgba(0,0,0, 1);
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -8px;
+  }
+  input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #03a9f4;
+  }
+  .range-wrap{
+    width: 500px;
+    position: relative;
+  }
+  .range-value{
+    position: absolute;
+    top: -50%;
+  }
+  .range-value span{
+    width: 30px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    background: #03a9f4;
+    color: #fff;
+    font-size: 12px;
+    display: block;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: 6px;
+  }
+  .range-value span:before{
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 10px solid #03a9f4;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    margin-top: -1px;
+  }
+ #textInput{
+    position: relative;
+}
+</style><body>
     <div class="container">
         <div class="form_one" id="one">
             <h3>Choose One (1)</h3>
             <form id="first_form" name="first_form">
-                <input type="radio" id="general" name="first_Val" value="General">
-                <label for="general">General</label><br>
-                <input type="radio" id="cronic" name="first_Val" value="Cronic">
-                <label for="cronic">Cronic</label><br>
+            
 
+            <b><span  id="textInput" ></span></b><br>
+                <input type="range" id="judgement" name="rangeInput" min="0" max="100" value="0" oninput=updateTextInput(this) style="width: 50%;">
+               
+               
+                
+                
+
+               
+
+               
             </form>
             <button onclick=getfirstval()>Next</button>
 
@@ -145,16 +220,41 @@ $script1= '
         document.getElementById("four").style.display = "none";
         
     }*/
-    function getfirstval() {
-        var loopvar = document.getElementsByName("first_Val");
-        for (i = 0; i < loopvar.length; i++) {
-            if (loopvar[i].checked) {
-                first_Value = loopvar[i].value;
-            }
+   
+    
+    function updateTextInput(slider) {
+        val=slider.value;
 
-        }
+        min=slider.min;
+        max=slider.max;
+        percent=(val - min)*100 / (max - min);
+        offset = -3;
+       
+        
+        first_Value=parseInt(val);
+        
+
+        document.getElementById(\'textInput\').style.left=val/2 - 2+"%";
+       document.getElementById(\'textInput\').innerHTML=val + " %"; 
+      }
+
+
+    
+
+
+
+
+    function getfirstval() {
+        
         if (typeof first_Value === \'undefined\') { 
+           
                    }  else {
+
+                    if(first_Value>50){
+                        first_Value="Cronic";
+                    }else{
+                        first_Value="General";
+                    }
             document.getElementById("two").style.display = "";
             document.getElementById("one").style.display = "none";
         }
